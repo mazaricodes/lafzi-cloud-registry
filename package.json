@@ -1,0 +1,14 @@
+{
+  "name": "lafzi-cloud-registry",
+  "version": "1.0.0",
+  "description": "Lafzi Studio Cloud Licensing & Hardware-Binding Registry",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@upstash/redis": "^1.34.3"
+  }
+}
