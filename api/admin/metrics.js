@@ -1,4 +1,4 @@
-import { getAllLicenses, getAlert, getUpdatesManifest } from '../../lib/redis.js';
+import { getAllLicenses, getAlert, getUpdatesManifest, getDownloadCounts } from '../../lib/redis.js';
 
 const ADMIN_PIN = process.env.LAFZI_ADMIN_PIN || 'lafzi2025';
 
@@ -19,6 +19,7 @@ export default async function handler(req, res) {
     const licenses = await getAllLicenses();
     const alert = await getAlert();
     const updates = await getUpdatesManifest();
+    const dlCounts = await getDownloadCounts();
 
     const activeLicenses = licenses.filter(l => l.status === 'active');
     const revokedLicenses = licenses.filter(l => l.status === 'revoked');
@@ -48,10 +49,10 @@ export default async function handler(req, res) {
         base_installs: 0,
       },
       downloads: {
-        total: licenses.length,
-        macos_arm64: licenses.filter(l => (l.platform || '').includes('Silicon')).length,
-        macos_x86_64: licenses.filter(l => (l.platform || '').includes('Intel')).length,
-        windows_x64: licenses.filter(l => (l.platform || '').includes('Windows')).length,
+        total: Math.max(dlCounts.total, licenses.length),
+        macos_arm64: Math.max(dlCounts.macos_arm64, licenses.filter(l => (l.platform || '').includes('Silicon')).length),
+        macos_x86_64: Math.max(dlCounts.macos_x86_64, licenses.filter(l => (l.platform || '').includes('Intel')).length),
+        windows_x64: Math.max(dlCounts.windows_x64, licenses.filter(l => (l.platform || '').includes('Windows')).length),
       },
       recent_licenses: licenses,
       updates,

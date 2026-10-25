@@ -9,6 +9,7 @@ import adminAlertHandler from './api/admin/alert.js';
 import adminMetricsHandler from './api/admin/metrics.js';
 import updatesHandler from './api/updates.js';
 import webhookHandler from './api/gumroad/webhook.js';
+import trackDownloadHandler from './api/downloads/track.js';
 
 const PORT = process.env.PORT || 3002;
 
@@ -21,6 +22,7 @@ const routes = {
   '/api/admin/metrics': adminMetricsHandler,
   '/api/updates': updatesHandler,
   '/api/gumroad/webhook': webhookHandler,
+  '/api/downloads/track': trackDownloadHandler,
 };
 
 function addCors(res) {
