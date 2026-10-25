@@ -6,6 +6,7 @@ import unbindHandler from './api/license/unbind.js';
 import revokeHandler from './api/license/revoke.js';
 import adminLicensesHandler from './api/admin/licenses.js';
 import adminAlertHandler from './api/admin/alert.js';
+import adminMetricsHandler from './api/admin/metrics.js';
 import updatesHandler from './api/updates.js';
 import webhookHandler from './api/gumroad/webhook.js';
 
@@ -17,6 +18,7 @@ const routes = {
   '/api/license/revoke': revokeHandler,
   '/api/admin/licenses': adminLicensesHandler,
   '/api/admin/alert': adminAlertHandler,
+  '/api/admin/metrics': adminMetricsHandler,
   '/api/updates': updatesHandler,
   '/api/gumroad/webhook': webhookHandler,
 };
