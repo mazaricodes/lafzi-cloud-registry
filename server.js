@@ -1,6 +1,7 @@
 import http from 'http';
 import { URL } from 'url';
 
+import indexHandler from './api/index.js';
 import activateHandler from './api/license/activate.js';
 import unbindHandler from './api/license/unbind.js';
 import revokeHandler from './api/license/revoke.js';
@@ -10,10 +11,14 @@ import adminMetricsHandler from './api/admin/metrics.js';
 import updatesHandler from './api/updates.js';
 import webhookHandler from './api/gumroad/webhook.js';
 import trackDownloadHandler from './api/downloads/track.js';
+import telemetryHandler from './api/telemetry.js';
 
 const PORT = process.env.PORT || 3002;
 
 const routes = {
+  '/': indexHandler,
+  '/api': indexHandler,
+  '/api/index': indexHandler,
   '/api/license/activate': activateHandler,
   '/api/license/unbind': unbindHandler,
   '/api/license/revoke': revokeHandler,
@@ -23,6 +28,7 @@ const routes = {
   '/api/updates': updatesHandler,
   '/api/gumroad/webhook': webhookHandler,
   '/api/downloads/track': trackDownloadHandler,
+  '/api/telemetry': telemetryHandler,
 };
 
 function addCors(res) {
@@ -39,7 +45,9 @@ const server = http.createServer(async (req, res) => {
   }
 
   const parsedUrl = new URL(req.url, `http://${req.headers.host}`);
-  const pathname = parsedUrl.pathname;
+  const pathname = parsedUrl.pathname.length > 1 && parsedUrl.pathname.endsWith('/')
+    ? parsedUrl.pathname.slice(0, -1)
+    : parsedUrl.pathname;
   const handler = routes[pathname];
 
   if (!handler) {
