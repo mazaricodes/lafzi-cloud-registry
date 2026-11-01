@@ -33,6 +33,10 @@ export default async function handler(req, res) {
     const studioInstalls = Math.max(installStats.studio, activeLicenses.length);
     const baseInstalls = Math.max(0, totalInstalls - studioInstalls);
 
+    const paidDownloads = Math.max(dlCounts.paid || 0, licenses.length);
+    const freeDownloads = dlCounts.free || 0;
+    const totalDownloads = Math.max(dlCounts.total || 0, freeDownloads + paidDownloads);
+
     return res.status(200).json({
       ok: true,
       revenue: {
@@ -54,10 +58,12 @@ export default async function handler(req, res) {
         base_installs: baseInstalls,
       },
       downloads: {
-        total: Math.max(dlCounts.total, licenses.length),
-        macos_arm64: Math.max(dlCounts.macos_arm64, licenses.filter(l => (l.platform || '').includes('Silicon')).length),
-        macos_x86_64: Math.max(dlCounts.macos_x86_64, licenses.filter(l => (l.platform || '').includes('Intel')).length),
-        windows_x64: Math.max(dlCounts.windows_x64, licenses.filter(l => (l.platform || '').includes('Windows')).length),
+        total: totalDownloads,
+        paid: paidDownloads,
+        free: freeDownloads,
+        macos_arm64: Math.max(dlCounts.macos_arm64 || 0, licenses.filter(l => (l.platform || '').includes('Silicon')).length),
+        macos_x86_64: Math.max(dlCounts.macos_x86_64 || 0, licenses.filter(l => (l.platform || '').includes('Intel')).length),
+        windows_x64: Math.max(dlCounts.windows_x64 || 0, licenses.filter(l => (l.platform || '').includes('Windows')).length),
       },
       recent_licenses: licenses,
       updates,

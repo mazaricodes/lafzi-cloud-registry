@@ -1,4 +1,4 @@
-import { saveLicense, getLicense } from '../../lib/redis.js';
+import { saveLicense, getLicense, incrementDownload } from '../../lib/redis.js';
 import { sanitizeKey } from '../../lib/crypto.js';
 
 export default async function handler(req, res) {
@@ -39,6 +39,18 @@ export default async function handler(req, res) {
         created_at: existing.created_at || Date.now(),
       };
       await saveLicense(licenseKey, record);
+
+      // Record paid download for Gumroad purchase
+      if (eventType === 'sale' && !refunded && !chargebacked) {
+        const platformVariant = String(payload.variants || '').toLowerCase();
+        let dlPlat = 'macos_arm64';
+        if (platformVariant.includes('intel') || platformVariant.includes('x86')) {
+          dlPlat = 'macos_x86_64';
+        } else if (platformVariant.includes('win')) {
+          dlPlat = 'windows_x64';
+        }
+        await incrementDownload(dlPlat, 'paid');
+      }
     }
 
     return res.status(200).json({ ok: true, recorded: true });
