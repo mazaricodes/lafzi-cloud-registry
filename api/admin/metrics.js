@@ -1,4 +1,4 @@
-import { getAllLicenses, getAlert, getUpdatesManifest, getDownloadCounts } from '../../lib/redis.js';
+import { getAllLicenses, getAlert, getUpdatesManifest, getDownloadCounts, getInstallStats } from '../../lib/redis.js';
 
 const ADMIN_PIN = process.env.LAFZI_ADMIN_PIN || 'lafzi2025';
 
@@ -28,6 +28,11 @@ export default async function handler(req, res) {
     const totalOrders = licenses.filter(l => l.provider === 'gumroad').length;
     const grossRevenue = totalOrders * 10; // $10 per Studio license
 
+    const installStats = await getInstallStats();
+    const totalInstalls = Math.max(installStats.total, activeLicenses.length);
+    const studioInstalls = Math.max(installStats.studio, activeLicenses.length);
+    const baseInstalls = Math.max(0, totalInstalls - studioInstalls);
+
     return res.status(200).json({
       ok: true,
       revenue: {
@@ -44,9 +49,9 @@ export default async function handler(req, res) {
         unbound: unboundLicenses.length,
       },
       users: {
-        total_installs: activeLicenses.length,
-        studio_installs: activeLicenses.length,
-        base_installs: 0,
+        total_installs: totalInstalls,
+        studio_installs: studioInstalls,
+        base_installs: baseInstalls,
       },
       downloads: {
         total: Math.max(dlCounts.total, licenses.length),
