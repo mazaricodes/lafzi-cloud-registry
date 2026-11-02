@@ -21,23 +21,34 @@ export default async function handler(req, res) {
     const target = body.platform || body.target || 'all';
     const manifest = (await getUpdatesManifest()) || {};
 
+    let platforms = { ...(manifest.platforms || {}) };
+
     if (target === 'all') {
       manifest.recalled = true;
       manifest.active = false;
-      if (manifest.platforms) {
-        Object.keys(manifest.platforms).forEach((k) => {
-          manifest.platforms[k].active = false;
-          manifest.platforms[k].recalled = true;
-          manifest.platforms[k].updated_at = Date.now();
-        });
-      }
-    } else if (manifest.platforms && manifest.platforms[target]) {
-      manifest.platforms[target].active = false;
-      manifest.platforms[target].recalled = true;
-      manifest.platforms[target].updated_at = Date.now();
+      Object.keys(platforms).forEach((k) => {
+        platforms[k] = {
+          ...platforms[k],
+          active: false,
+          recalled: true,
+          updated_at: Date.now(),
+        };
+      });
+    } else if (platforms[target]) {
+      platforms[target] = {
+        ...platforms[target],
+        active: false,
+        recalled: true,
+        updated_at: Date.now(),
+      };
     }
 
-    const updated = await saveUpdatesManifest(manifest);
+    const updated = await saveUpdatesManifest({
+      ...manifest,
+      platforms,
+      recalled: target === 'all' ? true : Boolean(manifest.recalled),
+      active: target === 'all' ? false : (manifest.active !== false),
+    });
 
     const targetLabel = target === 'all' ? 'all devices' : target;
 
