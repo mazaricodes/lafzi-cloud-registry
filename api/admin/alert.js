@@ -23,15 +23,39 @@ export default async function handler(req, res) {
 
   if (req.method === 'POST') {
     try {
-      const { alert, updates } = req.body || {};
+      const body = req.body || {};
+      let alert = body.alert;
+      if (!alert && (body.title !== undefined || body.message !== undefined)) {
+        alert = {
+          title: body.title || '',
+          message: body.message || '',
+          type: body.type || 'info',
+          action_label: body.action_label || '',
+          action_url: body.action_url || '',
+          active: Boolean(body.active),
+        };
+      }
+
+      let updatesData = body.updates;
+      if (!updatesData && (body.version || body.latest_version)) {
+        const dls = body.downloads || body.download_urls || {};
+        updatesData = {
+          latest_version: body.version || body.latest_version,
+          release_notes: body.release_notes || body.notes || '',
+          mandatory: Boolean(body.mandatory),
+          downloads: dls,
+          download_urls: dls,
+        };
+      }
+
       let updatedAlert = null;
       let updatedManifest = null;
 
       if (alert) {
         updatedAlert = await saveAlert(alert);
       }
-      if (updates) {
-        updatedManifest = await saveUpdatesManifest(updates);
+      if (updatesData) {
+        updatedManifest = await saveUpdatesManifest(updatesData);
       }
 
       return res.status(200).json({

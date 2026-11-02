@@ -8,6 +8,9 @@ import revokeHandler from './api/license/revoke.js';
 import adminLicensesHandler from './api/admin/licenses.js';
 import adminAlertHandler from './api/admin/alert.js';
 import adminMetricsHandler from './api/admin/metrics.js';
+import adminUpdatesPublishHandler from './api/admin/updates/publish.js';
+import adminAlertPublishHandler from './api/admin/alert/publish.js';
+import adminLicensesGenerateHandler from './api/admin/licenses/generate.js';
 import updatesHandler from './api/updates.js';
 import webhookHandler from './api/gumroad/webhook.js';
 import trackDownloadHandler from './api/downloads/track.js';
@@ -23,7 +26,11 @@ const routes = {
   '/api/license/unbind': unbindHandler,
   '/api/license/revoke': revokeHandler,
   '/api/admin/licenses': adminLicensesHandler,
+  '/api/admin/licenses/generate': adminLicensesGenerateHandler,
   '/api/admin/alert': adminAlertHandler,
+  '/api/admin/alert/publish': adminAlertPublishHandler,
+  '/api/admin/updates': adminUpdatesPublishHandler,
+  '/api/admin/updates/publish': adminUpdatesPublishHandler,
   '/api/admin/metrics': adminMetricsHandler,
   '/api/updates': updatesHandler,
   '/api/gumroad/webhook': webhookHandler,

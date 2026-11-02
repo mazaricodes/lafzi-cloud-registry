@@ -1,9 +1,14 @@
 import { getAllLicenses } from '../../lib/redis.js';
+import generateHandler from './licenses/generate.js';
 
 const ADMIN_PIN = process.env.LAFZI_ADMIN_PIN || 'lafzi2025';
 
 export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
+
+  if (req.method === 'POST') {
+    return generateHandler(req, res);
+  }
 
   const pin =
     req.query.admin_pin ||
