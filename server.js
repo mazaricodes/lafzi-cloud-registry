@@ -9,6 +9,7 @@ import adminLicensesHandler from './api/admin/licenses.js';
 import adminAlertHandler from './api/admin/alert.js';
 import adminMetricsHandler from './api/admin/metrics.js';
 import adminUpdatesPublishHandler from './api/admin/updates/publish.js';
+import adminUpdatesRecallHandler from './api/admin/updates/recall.js';
 import adminAlertPublishHandler from './api/admin/alert/publish.js';
 import adminLicensesGenerateHandler from './api/admin/licenses/generate.js';
 import updatesHandler from './api/updates.js';
@@ -31,6 +32,8 @@ const routes = {
   '/api/admin/alert/publish': adminAlertPublishHandler,
   '/api/admin/updates': adminUpdatesPublishHandler,
   '/api/admin/updates/publish': adminUpdatesPublishHandler,
+  '/api/admin/updates/recall': adminUpdatesRecallHandler,
+  '/api/admin/updates/undo': adminUpdatesRecallHandler,
   '/api/admin/metrics': adminMetricsHandler,
   '/api/updates': updatesHandler,
   '/api/gumroad/webhook': webhookHandler,
